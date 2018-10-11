@@ -1,12 +1,18 @@
 package com.akki.locationalarm.activities;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -26,6 +32,9 @@ import com.akki.locationalarm.utils.AppUtils;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 /*
  * * Created by v-akhilesh.chaudhary on 06/10/2018.
@@ -97,33 +106,54 @@ public class AlarmReceiverActivity extends AppCompatActivity {
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
+
+                //Vibrate device if true
+                if(mIsAlarmVibrate) {
+                    triggerDeviceVibrate();
+                }
             }
         } catch (IOException e) {
             AppUtils.showErrorMessage(mAlarmViewLayout, "OOPS...Something wen wrong!!", android.R.color.holo_red_light);
         }
     }
 
-    //Get an alarm sound. Try for an alarm. If none set, try notification,
-    //Otherwise, ringtone.
-    /* TODO: How to set RingTone, Vibrate */
+    /**
+    * Get an alarm sound. Try for an alarm. If none set, try notification, Otherwise, ringtone.
+    */
     private Uri getAlarmUri(String alarmRingTone) {
-        Uri alert = RingtoneManager
-                .getDefaultUri(RingtoneManager.TYPE_ALARM);
-        if (alert == null) {
-            alert = RingtoneManager
-                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            if (alert == null) {
-                alert = RingtoneManager
-                        .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-            }
+        Uri alert = null;
+        if(AppUtils.getAllRingTones(this).size() > 0) {
+           Iterator it = AppUtils.getAllRingTones(this).entrySet().iterator();
+           while (it.hasNext()) {
+               Map.Entry pair = (Map.Entry)it.next();
+               System.out.println(pair.getKey() + " = " + pair.getValue());
+               if(alarmRingTone.equalsIgnoreCase(pair.getKey().toString())) {
+                   alert = Uri.parse(pair.getValue().toString());
+                   it.remove(); // avoids a ConcurrentModificationException
+                   break;
+               }
+           }
+        } else {
+           alert = RingtoneManager
+                   .getDefaultUri(RingtoneManager.TYPE_ALARM);
+           if (alert == null) {
+               alert = RingtoneManager
+                       .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+               if (alert == null) {
+                   alert = RingtoneManager
+                           .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+               }
+           }
+
         }
+
         return alert;
     }
 
     private void snoozeAlarm() {
         AppPreferences.saveAlarmTriggerTimeStamp(AlarmReceiverActivity.this, new Date(System.currentTimeMillis()));
 
-        //TODO: Its a hack need to user work manager so that service do not gets killed by system
+        //TODO: Its a hack need to user Android's WorkManager so that service do not gets killed by system
         Intent serviceIntent = new Intent(this, LocationFeedService.class);
         startService(serviceIntent);
         finish();
@@ -164,6 +194,19 @@ public class AlarmReceiverActivity extends AppCompatActivity {
             if (activity != null)
                 activity.finish();
 
+        }
+    }
+
+    private void triggerDeviceVibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        if(v != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(500);
+            }
         }
     }
 }

@@ -3,7 +3,9 @@ package com.akki.locationalarm.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.Location;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.design.widget.Snackbar;
@@ -28,7 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -313,6 +317,22 @@ public class AppUtils {
         long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
 
         return diffInMinutes >= Long.parseLong(timestamp);
+    }
+
+    public static Map<String, String> getAllRingTones(Context context) {
+        RingtoneManager manager = new RingtoneManager(context);
+        manager.setType(RingtoneManager.TYPE_RINGTONE);
+        Cursor cursor = manager.getCursor();
+
+        Map<String, String> list = new HashMap<>();
+        while (cursor.moveToNext()) {
+            String notificationTitle = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
+            String notificationUri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
+
+            list.put(notificationTitle, notificationUri);
+        }
+
+        return list;
     }
 
 }
