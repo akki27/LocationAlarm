@@ -112,10 +112,11 @@ public class AlarmReceiverActivity extends AppCompatActivity {
 
         mMediaPlayer = new MediaPlayer();
         try {
+            mMediaPlayer.setLooping(true);
             mMediaPlayer.setDataSource(context, alert);
             final AudioManager audioManager = (AudioManager) context
                     .getSystemService(Context.AUDIO_SERVICE);
-            if (audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
+            if (audioManager != null && audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
                 mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mMediaPlayer.prepare();
                 mMediaPlayer.start();
@@ -135,8 +136,9 @@ public class AlarmReceiverActivity extends AppCompatActivity {
      * TODO: Set alarm tone as per input ringtone
     */
     private Uri getAlarmUri(String alarmRingTone) {
+        /*
         Uri alert = null;
-        /*if(AppUtils.getAllRingTones(this).size() > 0) {
+        if(AppUtils.getAllRingTones(this).size() > 0) {
            Iterator it = AppUtils.getAllRingTones(this).entrySet().iterator();
            while (it.hasNext()) {
                Map.Entry pair = (Map.Entry)it.next();
@@ -160,7 +162,7 @@ public class AlarmReceiverActivity extends AppCompatActivity {
            }
 
         }*/
-        alert = RingtoneManager
+        Uri alert = RingtoneManager
                 .getDefaultUri(RingtoneManager.TYPE_ALARM);
         if (alert == null) {
             alert = RingtoneManager

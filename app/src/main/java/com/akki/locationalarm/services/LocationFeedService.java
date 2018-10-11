@@ -261,6 +261,23 @@ public class LocationFeedService extends Service
             intent.putExtra(AppConstants.ALARM_ISVIBRATE_KEY, alarmItemModel.isVibrate());
             startActivity(intent);
 
+            //Create an offset from the current time in which the alarm will go off.
+            /*Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.SECOND, 1);
+
+            //Create a new PendingIntent and add it to the AlarmManager
+            Intent intent = new Intent(this, AlarmReceiverActivity.class);
+            intent.putExtra(AppConstants.ALARM_TITLE_KEY, alarmItemModel.getTitle());
+            intent.putExtra(AppConstants.ALARM_DESCRIPTION_KEY, alarmItemModel.getAlarmDescription());
+            intent.putExtra(AppConstants.ALARM_RINGTONE_KEY, alarmItemModel.getAlarmRingTone());
+            intent.putExtra(AppConstants.ALARM_ISREPEAT_KEY, alarmItemModel.isRepeat());
+            intent.putExtra(AppConstants.ALARM_ISVIBRATE_KEY, alarmItemModel.isVibrate());
+            PendingIntent pendingIntent = PendingIntent.getActivity(this,
+                    12345, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager am =
+                    (AlarmManager)getSystemService(Activity.ALARM_SERVICE);
+            am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(),
+                    pendingIntent);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
