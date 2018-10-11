@@ -228,7 +228,7 @@ public class LocationFeedService extends Service
                         + "\nAlarmAlti: " +Double.parseDouble(savedAlarmList.get(i).getLocationAltitude())
                         + "\nLocationDifference: " +distanceDiff);
 
-                if((int)distanceDiff <= 100) {
+                if((int) Math.round(distanceDiff) <= 100*1000000) {
                     Log.d(TAG, "Trigger this alarm now");
                     alarmItemModel = new AlarmItemModel(savedAlarmList.get(i).getTitle(),
                             savedAlarmList.get(i).getAlarmDescription(), savedAlarmList.get(i).getLocationLatitude(),

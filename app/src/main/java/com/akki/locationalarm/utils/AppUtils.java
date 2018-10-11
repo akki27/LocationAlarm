@@ -321,7 +321,7 @@ public class AppUtils {
 
     public static Map<String, String> getAllRingTones(Context context) {
         RingtoneManager manager = new RingtoneManager(context);
-        manager.setType(RingtoneManager.TYPE_RINGTONE);
+        manager.setType(RingtoneManager.TYPE_ALARM);
         Cursor cursor = manager.getCursor();
 
         Map<String, String> list = new HashMap<>();

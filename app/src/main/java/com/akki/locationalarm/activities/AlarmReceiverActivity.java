@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
@@ -46,6 +47,7 @@ public class AlarmReceiverActivity extends AppCompatActivity {
     private static final String TAG = AlarmReceiverActivity.class.getSimpleName();
 
     private MediaPlayer mMediaPlayer;
+    private Ringtone mRingtone;
     private CoordinatorLayout mAlarmViewLayout;
     private TextView mTvAlarmName, mAlarmDescription;
 
@@ -83,7 +85,9 @@ public class AlarmReceiverActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mMediaPlayer.stop();
-                //finish();
+                /*if(mRingtone != null && mRingtone.isLooping()) {
+                    mRingtone.setLooping(false);
+                }*/
                 if(!mIsAlarmRepeat) {
                     toggleAlarmStatus();
                 } else {
@@ -97,6 +101,15 @@ public class AlarmReceiverActivity extends AppCompatActivity {
     }
 
     private void playSound(Context context, Uri alert) {
+        /*mRingtone = RingtoneManager.getRingtone(getApplicationContext(), alert);
+        mRingtone.setLooping(true);
+        mRingtone.play();
+
+        //Vibrate device if true
+        if(mIsAlarmVibrate) {
+            triggerDeviceVibrate();
+        }*/
+
         mMediaPlayer = new MediaPlayer();
         try {
             mMediaPlayer.setDataSource(context, alert);
@@ -119,10 +132,11 @@ public class AlarmReceiverActivity extends AppCompatActivity {
 
     /**
     * Get an alarm sound. Try for an alarm. If none set, try notification, Otherwise, ringtone.
+     * TODO: Set alarm tone as per input ringtone
     */
     private Uri getAlarmUri(String alarmRingTone) {
         Uri alert = null;
-        if(AppUtils.getAllRingTones(this).size() > 0) {
+        /*if(AppUtils.getAllRingTones(this).size() > 0) {
            Iterator it = AppUtils.getAllRingTones(this).entrySet().iterator();
            while (it.hasNext()) {
                Map.Entry pair = (Map.Entry)it.next();
@@ -145,6 +159,16 @@ public class AlarmReceiverActivity extends AppCompatActivity {
                }
            }
 
+        }*/
+        alert = RingtoneManager
+                .getDefaultUri(RingtoneManager.TYPE_ALARM);
+        if (alert == null) {
+            alert = RingtoneManager
+                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            if (alert == null) {
+                alert = RingtoneManager
+                        .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+            }
         }
 
         return alert;

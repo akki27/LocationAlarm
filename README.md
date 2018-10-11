@@ -26,3 +26,4 @@ TODO:
 1. API2 is implemented but it is not working for now as server returning "Un-Authorized" error even using the same login which the login API returns. Same error is getting from Google's Postman. Need to re-check this.
 2. Handle multiple alarm at the same location:?? Do not Allow to save new alarm if one with the same lat, long, Alt already saved.
 3. Register API implementation once available.
+4. Repeating Ringtone
