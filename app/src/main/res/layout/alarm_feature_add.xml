@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.AddNewAlarmActivity"
+    android:layout_margin="@dimen/layout_margin_small"
+    android:layout_below="@+id/toolbar"
+    android:paddingTop="50dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alarm Name: " />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/layout_margin_extra_small">
+
+            <EditText
+                android:id="@+id/ed_alarm_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Alarm Title"
+                android:layout_weight=".4"/>
+
+            <EditText
+                android:id="@+id/ed_alarm_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Alarm Description" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alarm Trigger Location: " />
+
+        <Button
+            android:id="@+id/btn_set_location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set Location"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_margin="@dimen/layout_margin_extra_small">
+
+            <EditText
+                android:id="@+id/ed_location_latitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Latitude"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:clickable="false" />
+
+            <EditText
+                android:id="@+id/ed_location_longitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Longitude"
+                android:layout_marginLeft="@dimen/layout_margin_small"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
+                android:clickable="false" />
+
+            <EditText
+                android:id="@+id/ed_location_altitude"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="Altitude"
+                android:layout_marginLeft="@dimen/layout_margin_small"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
+                android:clickable="false" />
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alarm Ringtone: "/>
+
+        <EditText
+            android:id="@+id/ed_ringtone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Select Alarm ringtone"
+            android:layout_marginLeft="@dimen/layout_margin_small"
+            android:focusableInTouchMode="false"
+            android:focusable="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vibrate Mode: "/>
+        <RelativeLayout
+            android:id="@+id/spinner_bg_alarm_vibrate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/spinner_border"
+            android:layout_margin="@dimen/layout_margin_extra_small">
+            <Spinner
+                android:id="@+id/spnr_vibrate"
+                style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:entries="@array/vibrate_option"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Repeate Mode: "/>
+        <RelativeLayout
+            android:id="@+id/spinner_bg_alarm_repeat"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/spinner_border"
+            android:layout_margin="@dimen/layout_margin_extra_small">
+            <Spinner
+                android:id="@+id/spnr_repeat"
+                style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:entries="@array/repeat_option"/>
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Repeate Interval: "/>
+        <RelativeLayout
+            android:id="@+id/spinner_bg_alarm_repeat_interval"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/spinner_border"
+            android:layout_margin="@dimen/layout_margin_extra_small">
+            <Spinner
+                android:id="@+id/spnr_repeat_interval"
+                style="@style/Widget.AppCompat.DropDownItem.Spinner"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:entries="@array/repeat_interval"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+</ScrollView>

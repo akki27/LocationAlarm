@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">LocationAlarm</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_userName">UserName</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_userName">This user name is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="title_activity_alarm">AlarmActivity</string>
+
+    <string name="network_unavailable">Please check your internet!</string>
+    <string name="txt_saved_alarm">Saved Alarms</string>
+    <string name="txt_create_new_alarm">New Alarm</string>
+    <string name="txt_show_location_history">Location History</string>
+    <string name="txt_user_location_history">Your Location History</string>
+    <string name="txt_delete">DELETE</string>
+    <string name="stop_alarm">Stop Alarm</string>
+
+    <string-array name="ringtone_option">
+        <item>R1</item>
+        <item>R2</item>
+    </string-array>
+
+    <string-array name="vibrate_option">
+        <item>YES</item>
+        <item>NO</item>
+    </string-array>
+
+    <string-array name="repeat_option">
+        <item>YES</item>
+        <item>NO</item>
+    </string-array>
+
+    <string-array name="repeat_interval">
+        <item>1</item>
+        <item>5</item>
+        <item>10</item>
+        <item>20</item>
+        <item>30</item>
+        <item>60</item>
+    </string-array>
+
+</resources>

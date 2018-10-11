@@ -1,0 +1,18 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="layout_margin_large">16dp</dimen>
+    <dimen name="layout_margin_medium">12dp</dimen>
+    <dimen name="layout_margin_small">8dp</dimen>
+    <dimen name="layout_margin_extra_small">4dp</dimen>
+
+    <dimen name="padd_10">10dp</dimen>
+    <dimen name="ic_delete">30dp</dimen>
+    <dimen name="thumbnail">90dp</dimen>
+
+    <dimen name="alarm_delete_text">15sp</dimen>
+    <dimen name="alarm_title_text">16sp</dimen>
+
+    <dimen name="done_btn_margin">16dp</dimen>
+</resources>
