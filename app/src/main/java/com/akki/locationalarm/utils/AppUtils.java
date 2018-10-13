@@ -228,6 +228,15 @@ public class AppUtils {
         }
     }
 
+    public static int getDistanceBetween(Location latLon1, Location latLon2) {
+        if (latLon1 == null || latLon2 == null)
+            return 0;
+        float[] result = new float[1];
+        Location.distanceBetween(latLon1.getLatitude(), latLon1.getLongitude(),
+                latLon2.getLatitude(), latLon2.getLongitude(), result);
+        return Math.round(result[0]);
+    }
+
     public static float getDistanceBetweenTwoPoints(double lat1,double lon1,double lat2,double lon2) {
 
         float[] distance = new float[2];

@@ -220,7 +220,7 @@ public class LocationFeedService extends Service
         AlarmItemModel alarmItemModel = null;
         if(savedAlarmList.size() > 0) {
             for(int i = 0; i < savedAlarmList.size(); i++) {
-                double distanceDiff = AppUtils.geoDistanceBetweenTwoLocation(lastLocation.getAltitude(), Double.parseDouble(savedAlarmList.get(i).getLocationLatitude()),
+                /*double distanceDiff = AppUtils.geoDistanceBetweenTwoLocation(lastLocation.getAltitude(), Double.parseDouble(savedAlarmList.get(i).getLocationLatitude()),
                         lastLocation.getLongitude(), Double.parseDouble(savedAlarmList.get(i).getLocationLongitude()),
                         lastLocation.getAltitude(), Double.parseDouble(savedAlarmList.get(i).getLocationAltitude()));
                 Log.d(TAG, "AlarmLat: " +Double.parseDouble(savedAlarmList.get(i).getLocationLatitude())
@@ -237,8 +237,22 @@ public class LocationFeedService extends Service
                             savedAlarmList.get(i).getRepeatInterval(), savedAlarmList.get(i).isVibrate(),
                             savedAlarmList.get(i).isAlarmOn());
                     break;
-                }
+                }*/
 
+                Location targetLocation = new Location(LocationManager.GPS_PROVIDER);//provider name is unnecessary
+                targetLocation.setLatitude(Double.parseDouble(savedAlarmList.get(i).getLocationLatitude()));//your coords of course
+                targetLocation.setLongitude(Double.parseDouble(savedAlarmList.get(i).getLocationLongitude()));
+                Log.d(TAG, "LocationDiff: " +AppUtils.getDistanceBetween(lastLocation, targetLocation));
+                if(AppUtils.getDistanceBetween(lastLocation, targetLocation) <= 100) {
+                    Log.d(TAG, "Trigger this alarm now");
+                    alarmItemModel = new AlarmItemModel(savedAlarmList.get(i).getTitle(),
+                            savedAlarmList.get(i).getAlarmDescription(), savedAlarmList.get(i).getLocationLatitude(),
+                            savedAlarmList.get(i).getLocationLongitude(),savedAlarmList.get(i).getLocationAltitude(),
+                            savedAlarmList.get(i).getAlarmRingTone(), savedAlarmList.get(i).isRepeat(),
+                            savedAlarmList.get(i).getRepeatInterval(), savedAlarmList.get(i).isVibrate(),
+                            savedAlarmList.get(i).isAlarmOn());
+                    break;
+                }
             }
         }
 
