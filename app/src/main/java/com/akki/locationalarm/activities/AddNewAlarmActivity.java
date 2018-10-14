@@ -104,6 +104,7 @@ public class AddNewAlarmActivity extends AppCompatActivity
     private boolean isForUpdate = false;
     private String mSavedAlarmName = "";
     private boolean mCurAlarmStatus = true;
+    private int mCurAlarmId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +154,8 @@ public class AddNewAlarmActivity extends AppCompatActivity
             alarmRepeatIntervalCur = getIntent().getStringExtra(AppConstants.ALARM_REPEAT_INTERVAL);
             alarmVibrateCur = getIntent().getStringExtra(AppConstants.ALARM_ISVIBRATE_KEY);
             mCurAlarmStatus = getIntent().getBooleanExtra(AppConstants.ALARM_STATUS_KEY, true);
+            if(getIntent().getStringExtra(AppConstants.ALARM_ID_KEY) != null)
+                mCurAlarmId = Integer.parseInt(getIntent().getStringExtra(AppConstants.ALARM_ID_KEY));
 
         }
 
@@ -267,7 +270,7 @@ public class AddNewAlarmActivity extends AppCompatActivity
                                 locationLongitude.getText().toString(), locationAltitude.getText().toString(),
                                 mAlarmRingToneUriStr, spnrRepeat.getSelectedItem().toString(),
                                 spnrRepeatInterval.getSelectedItem().toString(), spnrVibrate.getSelectedItem().toString(),
-                                mCurAlarmStatus), mSavedAlarmName);
+                                mCurAlarmStatus), mSavedAlarmName, mCurAlarmId);
                     } else {
                         alarmViewModel.addAlarm(new AlarmItemModel(titleEditText.getText().toString(),
                                 alarmDescription.getText().toString(), locationLatitude.getText().toString(),

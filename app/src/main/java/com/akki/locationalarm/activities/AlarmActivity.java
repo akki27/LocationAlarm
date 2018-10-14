@@ -300,6 +300,7 @@ public class AlarmActivity extends AppCompatActivity implements RecyclerItemTouc
         intent.putExtra(AppConstants.ALARM_REPEAT_INTERVAL, alarmItemModel.getRepeatInterval());
         intent.putExtra(AppConstants.ALARM_ISVIBRATE_KEY, alarmItemModel.isVibrate());
         intent.putExtra(AppConstants.ALARM_STATUS_KEY, alarmItemModel.isAlarmOn());
+        intent.putExtra(AppConstants.ALARM_ID_KEY, String.valueOf(alarmItemModel.getId()));
 
 
         startActivity(intent);

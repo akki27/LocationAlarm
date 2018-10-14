@@ -85,27 +85,29 @@ public class AlarmViewModel extends AndroidViewModel {
     }
 
     /* Update Alarm data AsyncTask class */
-    public void updateAlarm(AlarmItemModel alarmItemModel, String savedAlarmName) {
-        new AlarmViewModel.updateAlarmAsyncTask(appDatabase, savedAlarmName).execute(alarmItemModel);
+    public void updateAlarm(AlarmItemModel alarmItemModel, String savedAlarmName, int curAlarmId) {
+        new AlarmViewModel.updateAlarmAsyncTask(appDatabase, savedAlarmName, curAlarmId).execute(alarmItemModel);
     }
     private static class updateAlarmAsyncTask extends android.os.AsyncTask<AlarmItemModel, Void, Void> {
 
         private AppDatabase db;
         private String mSavedAlarmName;
+        private int mCurAlarmId;
 
-        updateAlarmAsyncTask(AppDatabase appDatabase, String savedAlarmName) {
+        updateAlarmAsyncTask(AppDatabase appDatabase, String savedAlarmName, int curAlarmId) {
             db = appDatabase;
             mSavedAlarmName = savedAlarmName;
+            mCurAlarmId = curAlarmId;
         }
 
         @Override
         protected Void doInBackground(final AlarmItemModel... params) {
-            db.alarmDataModel().updateAlarm(String.valueOf(params[0].getId()), String.valueOf(params[0].getTitle()),
-                    String.valueOf(params[0].getAlarmDescription()), String.valueOf(params[0].getLocationLatitude()),
-                    String.valueOf(params[0].getLocationLongitude()), String.valueOf(params[0].getLocationAltitude()),
-                    String.valueOf(params[0].getAlarmRingTone()), String.valueOf(params[0].isRepeat()),
-                    String.valueOf(params[0].getRepeatInterval()), String.valueOf(params[0].isVibrate()),
-                    params[0].isAlarmOn(), mSavedAlarmName);
+            db.alarmDataModel().updateAlarm(String.valueOf(params[0].getTitle()), String.valueOf(params[0].getAlarmDescription()),
+                    String.valueOf(params[0].getLocationLatitude()), String.valueOf(params[0].getLocationLongitude()),
+                    String.valueOf(params[0].getLocationAltitude()), String.valueOf(params[0].getAlarmRingTone()),
+                    String.valueOf(params[0].isRepeat()), String.valueOf(params[0].getRepeatInterval()),
+                    String.valueOf(params[0].isVibrate()), params[0].isAlarmOn(),
+                    mSavedAlarmName, mCurAlarmId);
 
             return null;
         }

@@ -41,6 +41,7 @@ public class AppConstants {
     public static final String ALARM_LOCATION_LONGITUDE = "alarm_location_long";
     public static final String ALARM_LOCATION_ALTITUDE = "alarm_location_alt";
     public static final String ALARM_STATUS_KEY = "alarm_status_key";
+    public static final String ALARM_ID_KEY = "alarm_id_key";
 
     public static final String TIMEOUT = "timeout";
 
