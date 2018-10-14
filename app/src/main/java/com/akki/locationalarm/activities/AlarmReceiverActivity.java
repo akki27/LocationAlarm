@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.provider.MediaStore;
@@ -46,7 +47,6 @@ import java.util.Map;
 public class AlarmReceiverActivity extends AppCompatActivity {
     private static final String TAG = AlarmReceiverActivity.class.getSimpleName();
 
-    private MediaPlayer mMediaPlayer;
     private Ringtone mRingtone;
     private CoordinatorLayout mAlarmViewLayout;
     private TextView mTvAlarmName, mAlarmDescription;
@@ -84,10 +84,10 @@ public class AlarmReceiverActivity extends AppCompatActivity {
         stopAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMediaPlayer.stop();
-                /*if(mRingtone != null && mRingtone.isLooping()) {
-                    mRingtone.setLooping(false);
-                }*/
+                if(mRingtone != null) {
+                    mRingtone.stop();
+                    mRingtone = null;
+                }
                 if(!mIsAlarmRepeat) {
                     toggleAlarmStatus();
                 } else {
@@ -96,38 +96,22 @@ public class AlarmReceiverActivity extends AppCompatActivity {
             }
         });
 
-        playSound(this, getAlarmUri(alarmRingtone));
+        if(mRingtone != null) {
+            mRingtone.stop();
+            mRingtone = null;
+        }
+        playSound(getAlarmUri(alarmRingtone));
 
     }
 
-    private void playSound(Context context, Uri alert) {
-        /*mRingtone = RingtoneManager.getRingtone(getApplicationContext(), alert);
+    private void playSound(Uri alert) {
+        mRingtone = RingtoneManager.getRingtone(getApplicationContext(), alert);
         mRingtone.setLooping(true);
         mRingtone.play();
 
         //Vibrate device if true
         if(mIsAlarmVibrate) {
             triggerDeviceVibrate();
-        }*/
-
-        mMediaPlayer = new MediaPlayer();
-        try {
-            mMediaPlayer.setLooping(true);
-            mMediaPlayer.setDataSource(context, alert);
-            final AudioManager audioManager = (AudioManager) context
-                    .getSystemService(Context.AUDIO_SERVICE);
-            if (audioManager != null && audioManager.getStreamVolume(AudioManager.STREAM_ALARM) != 0) {
-                mMediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
-                mMediaPlayer.prepare();
-                mMediaPlayer.start();
-
-                //Vibrate device if true
-                if(mIsAlarmVibrate) {
-                    triggerDeviceVibrate();
-                }
-            }
-        } catch (IOException e) {
-            AppUtils.showErrorMessage(mAlarmViewLayout, "OOPS...Something wen wrong!!", android.R.color.holo_red_light);
         }
     }
 
@@ -136,40 +120,19 @@ public class AlarmReceiverActivity extends AppCompatActivity {
      * TODO: Set alarm tone as per input ringtone
     */
     private Uri getAlarmUri(String alarmRingTone) {
-        /*
         Uri alert = null;
-        if(AppUtils.getAllRingTones(this).size() > 0) {
-           Iterator it = AppUtils.getAllRingTones(this).entrySet().iterator();
-           while (it.hasNext()) {
-               Map.Entry pair = (Map.Entry)it.next();
-               System.out.println(pair.getKey() + " = " + pair.getValue());
-               if(alarmRingTone.equalsIgnoreCase(pair.getKey().toString())) {
-                   alert = Uri.parse(pair.getValue().toString());
-                   it.remove(); // avoids a ConcurrentModificationException
-                   break;
-               }
-           }
+        if(alarmRingTone != null && !alarmRingTone.isEmpty()) {
+            alert = Uri.parse(alarmRingTone);
         } else {
-           alert = RingtoneManager
-                   .getDefaultUri(RingtoneManager.TYPE_ALARM);
-           if (alert == null) {
-               alert = RingtoneManager
-                       .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-               if (alert == null) {
-                   alert = RingtoneManager
-                           .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-               }
-           }
-
-        }*/
-        Uri alert = RingtoneManager
-                .getDefaultUri(RingtoneManager.TYPE_ALARM);
-        if (alert == null) {
             alert = RingtoneManager
-                    .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                    .getDefaultUri(RingtoneManager.TYPE_ALARM);
             if (alert == null) {
                 alert = RingtoneManager
-                        .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                        .getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                if (alert == null) {
+                    alert = RingtoneManager
+                            .getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+                }
             }
         }
 
@@ -179,10 +142,6 @@ public class AlarmReceiverActivity extends AppCompatActivity {
     private void snoozeAlarm() {
         AppPreferences.saveAlarmTriggerTimeStamp(AlarmReceiverActivity.this, new Date(System.currentTimeMillis()));
 
-        //TODO: Its a hack need to user Android's WorkManager so that service do not gets killed by system
-        Intent serviceIntent = new Intent(this, LocationFeedService.class);
-        startService(serviceIntent);
-        finish();
     }
 
     private void toggleAlarmStatus() {

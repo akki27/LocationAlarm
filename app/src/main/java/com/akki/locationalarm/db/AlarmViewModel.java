@@ -82,7 +82,33 @@ public class AlarmViewModel extends AndroidViewModel {
             db.alarmDataModel().updateAlarmStatus(String.valueOf(params[0].getId()), params[0].isAlarmOn());
             return null;
         }
+    }
 
+    /* Update Alarm data AsyncTask class */
+    public void updateAlarm(AlarmItemModel alarmItemModel, String savedAlarmName) {
+        new AlarmViewModel.updateAlarmAsyncTask(appDatabase, savedAlarmName).execute(alarmItemModel);
+    }
+    private static class updateAlarmAsyncTask extends android.os.AsyncTask<AlarmItemModel, Void, Void> {
+
+        private AppDatabase db;
+        private String mSavedAlarmName;
+
+        updateAlarmAsyncTask(AppDatabase appDatabase, String savedAlarmName) {
+            db = appDatabase;
+            mSavedAlarmName = savedAlarmName;
+        }
+
+        @Override
+        protected Void doInBackground(final AlarmItemModel... params) {
+            db.alarmDataModel().updateAlarm(String.valueOf(params[0].getId()), String.valueOf(params[0].getTitle()),
+                    String.valueOf(params[0].getAlarmDescription()), String.valueOf(params[0].getLocationLatitude()),
+                    String.valueOf(params[0].getLocationLongitude()), String.valueOf(params[0].getLocationAltitude()),
+                    String.valueOf(params[0].getAlarmRingTone()), String.valueOf(params[0].isRepeat()),
+                    String.valueOf(params[0].getRepeatInterval()), String.valueOf(params[0].isVibrate()),
+                    params[0].isAlarmOn(), mSavedAlarmName);
+
+            return null;
+        }
     }
 
 }

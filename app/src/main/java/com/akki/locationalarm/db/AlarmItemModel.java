@@ -9,9 +9,9 @@ import android.arch.persistence.room.PrimaryKey;
  * Created by v-akhilesh.chaudhary on 06/10/2018.
  */
 
-@Entity(tableName = "alarm_table")
-/*@Entity(tableName = "alarm_table", indices = {@Index(value = "alarm_title",
-        unique = true)})*/
+//@Entity(tableName = "alarm_table")
+@Entity(tableName = "alarm_table", indices = {@Index(value = "alarm_title",
+        unique = true)})
 public class AlarmItemModel {
 
     @PrimaryKey(autoGenerate = true)
@@ -33,7 +33,7 @@ public class AlarmItemModel {
     private String locationAltitude;
 
     @ColumnInfo(name = "alarm_ringtome")
-    private String alarmRingTone; //TODO??
+    private String alarmRingTone;
 
     @ColumnInfo(name = "isRepeat")
     private String isRepeat;

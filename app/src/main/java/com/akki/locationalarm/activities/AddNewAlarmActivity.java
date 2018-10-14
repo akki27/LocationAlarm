@@ -24,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 import com.akki.locationalarm.R;
 import com.akki.locationalarm.db.AlarmItemModel;
 import com.akki.locationalarm.db.AlarmViewModel;
+import com.akki.locationalarm.db.AppDatabase;
 import com.akki.locationalarm.utils.AppConstants;
 import com.akki.locationalarm.utils.AppUtils;
 import com.google.android.gms.common.ConnectionResult;
@@ -79,6 +81,7 @@ public class AddNewAlarmActivity extends AppCompatActivity
     private EditText locationAltitude;
     private EditText alarmDescription;
     private EditText alarmRingTone;
+    private String mAlarmRingToneUriStr = "";
     private Spinner spnrVibrate;
     private Spinner spnrRepeat;
     private RelativeLayout mRlRepeatInterval;
@@ -98,6 +101,9 @@ public class AddNewAlarmActivity extends AppCompatActivity
 
     private Place mPlaceData;
     private CoordinatorLayout mAddNewAlarmLayout;
+    private boolean isForUpdate = false;
+    private String mSavedAlarmName = "";
+    private boolean mCurAlarmStatus = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,13 +131,58 @@ public class AddNewAlarmActivity extends AppCompatActivity
     private void initViews() {
         mAddNewAlarmLayout = (CoordinatorLayout) findViewById(R.id.layout_add_new_alarm);
         alarmViewModel = ViewModelProviders.of(this).get(AlarmViewModel.class);
+
+        //Get the preset values, if any
+        String alarmTitleCur = "";
+        String alarmDesCur = "";
+        String alarmLatCur = "";
+        String alarmLongCur = "";
+        String alarmAltCur = "";
+        String alarmToneCur = "";
+        String alarmRepeatCur = "";
+        String alarmRepeatIntervalCur = "";
+        String alarmVibrateCur = "";
+        if(getIntent() != null) {
+            alarmTitleCur = getIntent().getStringExtra(AppConstants.ALARM_TITLE_KEY);
+            alarmDesCur = getIntent().getStringExtra(AppConstants.ALARM_DESCRIPTION_KEY);
+            alarmLatCur = getIntent().getStringExtra(AppConstants.ALARM_LOCATION_LATITUDE);
+            alarmLongCur = getIntent().getStringExtra(AppConstants.ALARM_LOCATION_LONGITUDE);
+            alarmAltCur = getIntent().getStringExtra(AppConstants.ALARM_LOCATION_ALTITUDE);
+            alarmToneCur = getIntent().getStringExtra(AppConstants.ALARM_RINGTONE_KEY);
+            alarmRepeatCur = getIntent().getStringExtra(AppConstants.ALARM_ISREPEAT_KEY);
+            alarmRepeatIntervalCur = getIntent().getStringExtra(AppConstants.ALARM_REPEAT_INTERVAL);
+            alarmVibrateCur = getIntent().getStringExtra(AppConstants.ALARM_ISVIBRATE_KEY);
+            mCurAlarmStatus = getIntent().getBooleanExtra(AppConstants.ALARM_STATUS_KEY, true);
+
+        }
+
         titleEditText = findViewById(R.id.ed_alarm_title);
+        if(alarmTitleCur != null && !alarmTitleCur.isEmpty())
+            isForUpdate = true;
+            mSavedAlarmName = alarmTitleCur;
+            titleEditText.setText(alarmTitleCur);
+
         alarmDescription = (EditText) findViewById(R.id.ed_alarm_description);
+        if(alarmDesCur != null && !alarmDesCur.isEmpty())
+            alarmDescription.setText(alarmDesCur);
+
         locationLatitude = findViewById(R.id.ed_location_latitude);
+        if(alarmLatCur != null && !alarmLatCur.isEmpty())
+            locationLatitude.setText(alarmLatCur);
+
         locationLongitude = findViewById(R.id.ed_location_longitude);
+        if(alarmLongCur != null && !alarmLongCur.isEmpty())
+            locationLongitude.setText(alarmLongCur);
+
         locationAltitude = findViewById(R.id.ed_location_altitude);
+        if(alarmAltCur != null && !alarmAltCur.isEmpty())
+            locationAltitude.setText(alarmAltCur);
 
         alarmRingTone = (EditText) findViewById(R.id.ed_ringtone);
+        if(alarmToneCur != null && !alarmToneCur.isEmpty()) {
+            alarmRingTone.setText(alarmToneCur);
+            mAlarmRingToneUriStr = alarmToneCur;
+        }
         alarmRingTone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -148,10 +199,24 @@ public class AddNewAlarmActivity extends AppCompatActivity
         });
 
         spnrVibrate = findViewById(R.id.spnr_vibrate);
-        spnrRepeat = findViewById(R.id.spnr_repeat);
+        if(alarmVibrateCur != null && !alarmVibrateCur.isEmpty()) {
+            //TODO
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.vibrate_option, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnrVibrate.setAdapter(adapter);
+            int spinnerPosition = adapter.getPosition(alarmVibrateCur);
+            spnrVibrate.setSelection(spinnerPosition);
+        }
 
-        mRlRepeatInterval = (RelativeLayout) findViewById(R.id.spinner_bg_alarm_repeat_interval);
-        spnrRepeatInterval = (Spinner) findViewById(R.id.spnr_repeat_interval);
+        spnrRepeat = findViewById(R.id.spnr_repeat);
+        if(alarmRepeatCur != null && !alarmRepeatCur.isEmpty()) {
+            //TODO
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.repeat_option, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnrRepeat.setAdapter(adapter);
+            int spinnerPosition = adapter.getPosition(alarmRepeatCur);
+            spnrRepeat.setSelection(spinnerPosition);
+        }
 
         spnrRepeat.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -171,6 +236,17 @@ public class AddNewAlarmActivity extends AppCompatActivity
 
         });
 
+        mRlRepeatInterval = (RelativeLayout) findViewById(R.id.spinner_bg_alarm_repeat_interval);
+        spnrRepeatInterval = (Spinner) findViewById(R.id.spnr_repeat_interval);
+        if(alarmRepeatIntervalCur != null && !alarmRepeatIntervalCur.isEmpty()) {
+            //TODO:
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.repeat_interval, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spnrRepeatInterval.setAdapter(adapter);
+            int spinnerPosition = adapter.getPosition(alarmRepeatIntervalCur);
+            spnrRepeatInterval.setSelection(spinnerPosition);
+        }
+
         setLocation = (Button) findViewById(R.id.btn_set_location);
         setLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -185,12 +261,22 @@ public class AddNewAlarmActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 if (isFeatureValidated()) {
-                    alarmViewModel.addAlarm(new AlarmItemModel(titleEditText.getText().toString(),
-                            alarmDescription.getText().toString(), locationLatitude.getText().toString(),
-                            locationLongitude.getText().toString(), locationAltitude.getText().toString(),
-                            alarmRingTone.getText().toString(), spnrRepeat.getSelectedItem().toString(),
-                            spnrRepeatInterval.getSelectedItem().toString(), spnrVibrate.getSelectedItem().toString(),
-                            true));
+                    if(isForUpdate) {
+                        alarmViewModel.updateAlarm(new AlarmItemModel(titleEditText.getText().toString(),
+                                alarmDescription.getText().toString(), locationLatitude.getText().toString(),
+                                locationLongitude.getText().toString(), locationAltitude.getText().toString(),
+                                mAlarmRingToneUriStr, spnrRepeat.getSelectedItem().toString(),
+                                spnrRepeatInterval.getSelectedItem().toString(), spnrVibrate.getSelectedItem().toString(),
+                                mCurAlarmStatus), mSavedAlarmName);
+                    } else {
+                        alarmViewModel.addAlarm(new AlarmItemModel(titleEditText.getText().toString(),
+                                alarmDescription.getText().toString(), locationLatitude.getText().toString(),
+                                locationLongitude.getText().toString(), locationAltitude.getText().toString(),
+                                mAlarmRingToneUriStr, spnrRepeat.getSelectedItem().toString(),
+                                spnrRepeatInterval.getSelectedItem().toString(), spnrVibrate.getSelectedItem().toString(),
+                                true));
+                    }
+
                     finish();
                 }
             }
@@ -433,6 +519,8 @@ public class AddNewAlarmActivity extends AppCompatActivity
             super.onActivityResult(requestCode, resultCode, data);
             if (requestCode == AppConstants.RINGTONE_REQUEST_CODE && resultCode  == RESULT_OK) {
                 Uri uri = data.getParcelableExtra(RingtoneManager.EXTRA_RINGTONE_PICKED_URI);
+                Log.d(TAG, "AKKIURICheck: " +uri.toString());
+                mAlarmRingToneUriStr = uri.toString();
                 Ringtone ringtone = RingtoneManager.getRingtone(this, uri);
                 alarmRingTone.setText(ringtone.getTitle(this));
             } else if(requestCode == AppConstants.PLACE_PICKER_REQ_CODE && resultCode  == AppConstants.LOCATION_RESULT_CODE){

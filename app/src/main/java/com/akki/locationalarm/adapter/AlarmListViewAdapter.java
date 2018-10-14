@@ -2,6 +2,7 @@ package com.akki.locationalarm.adapter;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.akki.locationalarm.activities.AddNewAlarmActivity;
 import com.akki.locationalarm.activities.AlarmActivity;
 import com.akki.locationalarm.R;
 import com.akki.locationalarm.db.AlarmItemModel;
 import com.akki.locationalarm.db.AlarmViewModel;
+import com.akki.locationalarm.utils.AppConstants;
 
 import java.util.List;
 
@@ -28,6 +31,11 @@ public class AlarmListViewAdapter extends RecyclerView.Adapter<AlarmListViewAdap
     private Context mContext;
     private List<AlarmItemModel> alarmItemModelList;
     private AlarmViewModel mViewModel;
+
+    public interface OnAlarmClickListener {
+        void onAlarmClick(AlarmItemModel alarmItemModel);
+    }
+    private final OnAlarmClickListener mListener;
 
     public class ItemRecyclerViewHolder extends RecyclerView.ViewHolder {
         private TextView mAlarmName, mAlarmDescription;
@@ -43,9 +51,10 @@ public class AlarmListViewAdapter extends RecyclerView.Adapter<AlarmListViewAdap
         }
     }
 
-    public AlarmListViewAdapter(Context context, List<AlarmItemModel> alarmItemModelList) {
+    public AlarmListViewAdapter(Context context, List<AlarmItemModel> alarmItemModelList, OnAlarmClickListener listener) {
         this.mContext = context;
         this.alarmItemModelList = alarmItemModelList;
+        this.mListener = listener;
 
         mViewModel = ViewModelProviders.of((AlarmActivity)mContext).get(AlarmViewModel.class);
     }
@@ -81,6 +90,32 @@ public class AlarmListViewAdapter extends RecyclerView.Adapter<AlarmListViewAdap
         });
 
         holder.itemView.setTag(alarmItemModel);
+
+        /*holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(mContext, AddNewAlarmActivity.class);
+                intent.putExtra(AppConstants.ALARM_TITLE_KEY, alarmItemModel.getTitle());
+                intent.putExtra(AppConstants.ALARM_DESCRIPTION_KEY, alarmItemModel.getAlarmDescription());
+                intent.putExtra(AppConstants.ALARM_LOCATION_LATITUDE, alarmItemModel.getLocationLatitude());
+                intent.putExtra(AppConstants.ALARM_LOCATION_LONGITUDE, alarmItemModel.getLocationLongitude());
+                intent.putExtra(AppConstants.ALARM_LOCATION_ALTITUDE, alarmItemModel.getLocationAltitude());
+                intent.putExtra(AppConstants.ALARM_RINGTONE_KEY, alarmItemModel.getAlarmRingTone());
+                intent.putExtra(AppConstants.ALARM_ISREPEAT_KEY, alarmItemModel.isRepeat());
+                intent.putExtra(AppConstants.ALARM_REPEAT_INTERVAL, alarmItemModel.getRepeatInterval());
+                intent.putExtra(AppConstants.ALARM_ISVIBRATE_KEY, alarmItemModel.isVibrate());
+                intent.putExtra(AppConstants.ALARM_STATUS_KEY, alarmItemModel.isAlarmOn());
+                mContext.startActivity(intent);
+            }
+        });*/
+
+        /* Notification Item click event */
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mListener.onAlarmClick(alarmItemModel);
+            }
+        });
 
     }
 

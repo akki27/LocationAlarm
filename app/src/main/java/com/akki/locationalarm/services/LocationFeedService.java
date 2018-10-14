@@ -1,14 +1,26 @@
 package com.akki.locationalarm.services;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.akki.locationalarm.R;
+import com.akki.locationalarm.activities.AlarmActivity;
 import com.akki.locationalarm.activities.AlarmReceiverActivity;
 import com.akki.locationalarm.db.AlarmItemModel;
 import com.akki.locationalarm.db.AppDatabase;
@@ -27,6 +39,8 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.support.v4.app.NotificationCompat.PRIORITY_MIN;
 
 /*
  * * Created by v-akhilesh.chaudhary on 06/10/2018.
@@ -96,8 +110,60 @@ public class LocationFeedService extends Service
     public int onStartCommand(Intent intent, int flags, int startId)
     {
         Log.e(TAG, "onStartCommand");
-        super.onStartCommand(intent, flags, startId);
+        //super.onStartCommand(intent, flags, startId);
+
+        showNotification();
+
         return START_STICKY;
+    }
+
+    private void showNotification() {
+        Intent notificationIntent = new Intent(this, AlarmActivity.class);
+        notificationIntent.setAction(AppConstants.ALARM_ACTION.MAIN_ACTION);
+        notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,
+                notificationIntent, 0);
+
+        Bitmap icon = BitmapFactory.decodeResource(getResources(),
+                R.mipmap.ic_launcher);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        String channelId = Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ? createNotificationChannel(notificationManager) : "";
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, channelId);
+        Notification notification = notificationBuilder.setOngoing(true)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setPriority(PRIORITY_MIN)
+                .setCategory(NotificationCompat.CATEGORY_SERVICE)
+                .setContentTitle("LocationAlarm App")
+                .setContentText("Doing some work...")
+                .setLargeIcon(Bitmap.createScaledBitmap(icon, 128, 128, false))
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true).setContentIntent(pendingIntent)
+                .setOngoing(true)
+                .build();
+
+        startForeground(AppConstants.NOTIFICATION_ID.FOREGROUND_SERVICE,
+                notification);
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private String createNotificationChannel(NotificationManager notificationManager){
+        String channelId = "channel_id";
+        String channelName = "Location Alarm";
+        // The user-visible description of the channel.
+        String description = "Location Alarm Foreground Service";
+        NotificationChannel channel = new NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH);
+        // Configure the notification channel.
+        channel.setDescription(description);
+        channel.enableLights(true);
+        // Sets the notification light color for notifications posted to this
+        // channel, if the device supports this feature.
+        channel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+        channel.enableVibration(true);
+        notificationManager.createNotificationChannel(channel);
+        return channelId;
     }
 
     @Override

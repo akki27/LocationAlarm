@@ -24,7 +24,6 @@ public class AppConstants {
     public static final String LOCATION_HISTORY_RESULT = "location_history_result";
 
     public static final int ALL_PERMISSIONS_RESULT = 1000;
-    public static final int LOC_REQ_CODE = 1;
     public static final int LOCATION_RESULT_CODE = 2;
     public static final int RINGTONE_REQUEST_CODE = 100;
     public static final int REQUEST_CURRENT_LOCATION_PERMISSION_CODE = 101;
@@ -35,8 +34,13 @@ public class AppConstants {
     public static final String ALARM_TITLE_KEY = "alarm_title_key";
     public static final String ALARM_DESCRIPTION_KEY = "alarm_description_key";
     public static final String ALARM_ISREPEAT_KEY = "alarm_isRepeat_key";
+    public static final String ALARM_REPEAT_INTERVAL = "alarm_repeat_interval";
     public static final String ALARM_ISVIBRATE_KEY = "alarm_isVibrate_key";
     public static final String ALARM_TRIGGER_TIME_KEY = "alarm_trigger_time_key";
+    public static final String ALARM_LOCATION_LATITUDE = "alarm_location_lat";
+    public static final String ALARM_LOCATION_LONGITUDE = "alarm_location_long";
+    public static final String ALARM_LOCATION_ALTITUDE = "alarm_location_alt";
+    public static final String ALARM_STATUS_KEY = "alarm_status_key";
 
     public static final String TIMEOUT = "timeout";
 
@@ -50,11 +54,14 @@ public class AppConstants {
         public static String ACTION_SNOOZE = "action_snooze";
         public static String ACTION_START_FOREGROUND = "action_start_foreground";
         public static String ACTION_STOP_FOREGROUND = "action.stop_foreground";
+        public static String MAIN_ACTION = "action.main_foreground";
+        public static String INIT_ACTION = "action.init_foreground";
     }
 
     public interface NOTIFICATION_ID {
         public static int FOREGROUND_SERVICE = 101;
     }
+
 
     public static enum SessionTimerState {
         UNKNOWN,

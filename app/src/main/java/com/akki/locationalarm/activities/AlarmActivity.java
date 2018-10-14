@@ -3,6 +3,7 @@ package com.akki.locationalarm.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
@@ -55,7 +56,8 @@ import retrofit2.Response;
  * 2. New Alarm: Open new screen and provide options to add a new alarm
  * 3. Location History: Open new screen and show device location history data. [API3]
  */
-public class AlarmActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
+public class AlarmActivity extends AppCompatActivity implements RecyclerItemTouchHelper.RecyclerItemTouchHelperListener,
+        AlarmListViewAdapter.OnAlarmClickListener{
 
     private static final String TAG = AlarmActivity.class.getSimpleName();
 
@@ -117,7 +119,7 @@ public class AlarmActivity extends AppCompatActivity implements RecyclerItemTouc
         mProgressView = findViewById(R.id.api_progress);
 
         mAlarmItemModelList = new ArrayList<>();
-        alarmListViewAdapter = new AlarmListViewAdapter(this, mAlarmItemModelList);
+        alarmListViewAdapter = new AlarmListViewAdapter(this, mAlarmItemModelList, this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.setAdapter(alarmListViewAdapter);
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
@@ -275,6 +277,57 @@ public class AlarmActivity extends AppCompatActivity implements RecyclerItemTouc
     /* Start device location feed service */
     private void startLocationFeedService() {
         Intent serviceIntent = new Intent(this, LocationFeedService.class);
-        startService(serviceIntent);
+        //startService(serviceIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(serviceIntent);
+        } else {
+            startService(serviceIntent);
+        }
+
+    }
+
+    @Override
+    public void onAlarmClick(AlarmItemModel alarmItemModel) {
+        Intent intent = new Intent(AlarmActivity.this, AddNewAlarmActivity.class);
+        intent.putExtra(AppConstants.ALARM_TITLE_KEY, alarmItemModel.getTitle());
+        intent.putExtra(AppConstants.ALARM_DESCRIPTION_KEY, alarmItemModel.getAlarmDescription());
+        intent.putExtra(AppConstants.ALARM_LOCATION_LATITUDE, alarmItemModel.getLocationLatitude());
+        intent.putExtra(AppConstants.ALARM_LOCATION_LONGITUDE, alarmItemModel.getLocationLongitude());
+        intent.putExtra(AppConstants.ALARM_LOCATION_ALTITUDE, alarmItemModel.getLocationAltitude());
+        intent.putExtra(AppConstants.ALARM_RINGTONE_KEY, alarmItemModel.getAlarmRingTone());
+        intent.putExtra(AppConstants.ALARM_ISREPEAT_KEY, alarmItemModel.isRepeat());
+        intent.putExtra(AppConstants.ALARM_REPEAT_INTERVAL, alarmItemModel.getRepeatInterval());
+        intent.putExtra(AppConstants.ALARM_ISVIBRATE_KEY, alarmItemModel.isVibrate());
+        intent.putExtra(AppConstants.ALARM_STATUS_KEY, alarmItemModel.isAlarmOn());
+
+
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "OnResumeCalled");
+        updateAlarmList();
+    }
+
+    private void updateAlarmList() {
+        Log.d(TAG, "updateAlarmList");
+        mViewModel.getSavedAlarmList().observe(AlarmActivity.this, new Observer<List<AlarmItemModel>>() {
+            @Override
+            public void onChanged(@Nullable List<AlarmItemModel> alarmListItem) {
+                alarmListViewAdapter.addItems(alarmListItem);
+                mAlarmItemModelList.clear();
+                mAlarmItemModelList.addAll(alarmListItem);
+                Log.d(TAG, "updateAlarmList()_onChanged: " +alarmListItem.size() + "::" +alarmListItem.size());
+
+                if(mAlarmItemModelList != null && mAlarmItemModelList.size() > 0) {
+                    mTvNoSavedAlarm.setVisibility(View.GONE);
+                } else {
+                    mTvNoSavedAlarm.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 }

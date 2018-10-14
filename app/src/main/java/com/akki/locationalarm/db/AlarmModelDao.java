@@ -38,4 +38,8 @@ public interface AlarmModelDao {
     @Query("update alarm_table set isAlarmOn =:alarmStatus where alarm_title = :title")
     void updateAlarmStatusByTitle(String title, boolean alarmStatus);
 
+    @Query("update alarm_table set alarm_title =:newTitle, alarm_description =:newDes, location_latitude =:newLat, location_longitude =:newLong, location_altitude =:newAlt, alarm_ringtome =:newRingtone, isRepeat =:newRepeat, repeatInterval =:newRepeatInterval, isVibrate =:newVibrate, isAlarmOn =:alarmStatus where id = :id AND alarm_title = :savedAlarmName")
+    void updateAlarm(String id, String newTitle, String newDes, String newLat, String newLong, String newAlt, String newRepeat,
+                     String newRingtone, String newRepeatInterval, String newVibrate, boolean alarmStatus, String savedAlarmName);
+
 }
