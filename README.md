@@ -20,10 +20,10 @@ Available Feature:
     5. IsRepeat (Mandatory)
     6. Repeat Interval (Mandatory) ==> If isRepeat is "YES" show this field to user else hide
     7. IsVibrate (Mandatory)
-4. Location History Screen: This screen shows device location history
+4. Edit any exiting alarm: Click on the saved alarm and do the desired updation for the selected alarm.    
+5. Location History Screen: This screen shows device location history
 
 TODO:
 1. API2 is implemented but it is not working for now as server returning "Un-Authorized" error even using the same login which the login API returns. Same error is getting from Google's Postman. Need to re-check this.
-2. Handle multiple alarm at the same location:?? Do not Allow to save new alarm if one with the same lat, long, Alt already saved.
+2. Handle multiple alarm at the same location (within range of 100m): Possible way ==> Do not Allow to save new alarm if one with the same location attributes is already saved.
 3. Register API implementation once available.
-4. Repeating Ringtone
