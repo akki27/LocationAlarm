@@ -4,12 +4,11 @@ import com.google.gson.annotations.SerializedName;
 
 public class LocationData {
 
-    private final String latitude;
-    private final String longitude;
+    private final String mLatitude;
+    private final String mLongitude;
 
     public LocationData(String latitude, String longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
+        this.mLatitude = latitude;
+        this.mLongitude = longitude;
     }
-
 }

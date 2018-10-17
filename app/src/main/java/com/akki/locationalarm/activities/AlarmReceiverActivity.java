@@ -93,6 +93,7 @@ public class AlarmReceiverActivity extends AppCompatActivity {
                 } else {
                     snoozeAlarm();
                 }
+                finish();
             }
         });
 

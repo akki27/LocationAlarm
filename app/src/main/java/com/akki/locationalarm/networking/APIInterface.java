@@ -6,6 +6,8 @@ import com.akki.locationalarm.models.LocationSaveResponse;
 import com.akki.locationalarm.models.LoginResponse;
 import com.akki.locationalarm.models.UserCredentials;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -33,6 +35,6 @@ public interface APIInterface {
     Call<LocationSaveResponse> saveLocation(@Header("Authorization") String authHeader,
                                             @Header("Content-Type") String contentTypeHeader,
                                             @Header("Accept") String acceptHeader,
-                                            @Body LocationData data);
+                                            @Body List<LocationData> data);
 
 }

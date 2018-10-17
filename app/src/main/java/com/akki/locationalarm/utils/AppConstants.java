@@ -45,7 +45,7 @@ public class AppConstants {
 
     public static final String TIMEOUT = "timeout";
 
-    public static final int LOCATION_INTERVAL = 1000; //For debugging purpose only, In final make it 5000 or more
+    public static final int LOCATION_INTERVAL = 60*1000; //For debugging purpose only, In final make it 60*5000 or more
     public static final float LOCATION_DISTANCE = 10f;
 
 

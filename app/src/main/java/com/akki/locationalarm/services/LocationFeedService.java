@@ -218,22 +218,26 @@ public class LocationFeedService extends Service
     private void saveLocationToServer(double latitude, double longitude) {
         String loginToken = AppPreferences.getLoginToken(this);
         String authorizationHeaderStr = "Bearer " + loginToken;
+
+        Log.d(TAG, "LoginToken: " +loginToken + ":\nWithBearer: " +authorizationHeaderStr);
         String contentTypeHeader = "application/json";
         String acceptHeader = "application/json";
 
         APIInterface apiInterface = APIClient.getClient().create(APIInterface.class);
+        List<LocationData> locationDataList = new ArrayList<LocationData>();
+        locationDataList.add(new LocationData(String.valueOf(latitude), String.valueOf(longitude)));
         Call<LocationSaveResponse> call = apiInterface.saveLocation(authorizationHeaderStr, contentTypeHeader,
-                acceptHeader, new LocationData(String.valueOf(latitude), String.valueOf(longitude)));
+                acceptHeader, locationDataList);
 
         call.enqueue(new Callback<LocationSaveResponse>() {
             @Override
             public void onResponse(Call<LocationSaveResponse> call, Response<LocationSaveResponse> response) {
-                //Log.d(TAG, "SaveLocation_onResponse: " +response.body().getResult());
+                Log.d(TAG, "SaveLocation_onResponse: " +response.message() + ": " +response.body().getResult());
             }
 
             @Override
             public void onFailure(Call<LocationSaveResponse> call, Throwable t) {
-                Log.d(TAG, "SaveLocation_onFailure: " +t.getMessage());
+                Log.d(TAG, "SaveLocation_onFailure: " +t.getMessage() + "::Cause: " +t.getCause());
             }
         });
 
